@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "Catálogo de Cursos - Atividade 00 a 14",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "instrutorId",
+      "value": ""
+    },
+    {
+      "key": "cursoId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Cadastrar instrutor",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/instrutores",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\":\"Marina Costa\",\"email\":\"marina.{{$timestamp}}@example.com\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"instrutorId\",pm.response.json().id);",
+              "pm.test(\"Location\",()=>pm.expect(pm.response.headers.has(\"Location\")).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Cadastrar Java",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/cursos",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Java orientado a objetos\",\"cargaHoraria\":60,\"nivel\":\"INICIANTE\",\"instrutorId\":\"{{instrutorId}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\",()=>pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"cursoId\",pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Cadastrar APIs",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/cursos",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"APIs REST\",\"cargaHoraria\":40,\"nivel\":\"INTERMEDIARIO\",\"instrutorId\":\"{{instrutorId}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\",()=>pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Consultar curso",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/cursos/{{cursoId}}",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"Sem recursão\",()=>pm.expect(pm.response.json().instrutor).not.to.have.property(\"cursos\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Listar cursos ordenados",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/instrutores/{{instrutorId}}/cursos",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "pm.test(\"Filtrados e ordenados\",()=>{const a=pm.response.json();pm.expect(a.length).to.eql(2);pm.expect(a[0].titulo).to.eql(\"APIs REST\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Instrutor inválido",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/instrutores",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\":\"A\",\"email\":\"invalido\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Instrutor inexistente",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/cursos",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Java\",\"cargaHoraria\":40,\"nivel\":\"INICIANTE\",\"instrutorId\":2147483647}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Curso inexistente",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/cursos/2147483647",
+        "header": []
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
