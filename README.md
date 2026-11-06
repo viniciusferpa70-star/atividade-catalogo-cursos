@@ -1,4 +1,7 @@
 # Catálogo de Cursos
+
+**Autor: Vinicius Portela Nunes de Oliveira**
+
 Atividade prática das aulas 00 a 14. Projeto independente gerado pelo Spring Initializr: Java 21, Spring Boot 4.0.7, Maven Wrapper, PostgreSQL e Liquibase. Não reutiliza classes, pacotes, banco ou histórico Git do petshop.
 
 ## Executar
